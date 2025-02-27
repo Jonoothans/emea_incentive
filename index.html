@@ -112,7 +112,12 @@
 
     fetchTableData();
 </script>
-
+<script>
+    // Refresh the page every 10 minutes (600,000 milliseconds)
+    setInterval(() => {
+        location.reload();
+    }, 600000);
+</script>
 
 </body>
 </html>
