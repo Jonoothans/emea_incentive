@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -80,9 +82,9 @@
 
   <script>
     const SUPABASE_URL = "https://ybtupotxytuoattvdnrk.supabase.co";
-    const SUPABASE_KEY = "YOUR_SUPABASE_KEY"; // <- replace with your real key
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidHVwb3R4eXR1b2F0dHZkbnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0NzYwMDQsImV4cCI6MjA1NjA1MjAwNH0.cYb-OOtjPJiPNUOCAH032Eql1bsXnfzWtw4t831PlxQ";
     const TABLE_NAME = "emea_incentive";
-    const API_URL = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}`;
+    const API_URL = ${SUPABASE_URL}/rest/v1/${TABLE_NAME};
 
     async function fetchTableData() {
       try {
@@ -90,55 +92,62 @@
           method: "GET",
           headers: {
             "apikey": SUPABASE_KEY,
-            "Authorization": `Bearer ${SUPABASE_KEY}`,
+            "Authorization": Bearer ${SUPABASE_KEY},
             "Content-Type": "application/json"
           }
         });
 
         let data = await response.json();
-        if (data.length === 0) return console.error("⚠️ No data found in Supabase table.");
 
-        data.forEach(row => row.Points = Number(row.Points) || 0);
-        data.sort((a, b) => b.Points - a.Points);
+        if (data.length > 0) {
+          const tableHead = document.getElementById("table-head");
+          const tableBody = document.getElementById("table-body");
 
-        const tableHead = document.getElementById("table-head");
-        const tableBody = document.getElementById("table-body");
-
-        // Build headers
-        tableHead.innerHTML = "";
-        Object.keys(data[0]).forEach(col => {
-          const th = document.createElement("th");
-          th.textContent = col;
-          tableHead.appendChild(th);
-        });
-
-        tableBody.innerHTML = "";
-        data.forEach((row, index) => {
-          const tr = document.createElement("tr");
-          let highlightRow = false;
-
-          Object.entries(row).forEach(([col, value]) => {
-            const td = document.createElement("td");
-
-            if (col === "Name") {
-              let medal = index === 0 ? " 🥇" : index === 1 ? " 🥈" : index === 2 ? " 🥉" : "";
-              td.textContent = value + medal;
-            } else if (col === "Training Completion") {
-              let percent = parseFloat(value);
-              if (!isNaN(percent) && percent >= 70) highlightRow = true;
-              td.textContent = value;
-            } else {
-              td.textContent = value;
-            }
-
-            tr.appendChild(td);
+          data.forEach(row => {
+            row.Points = Number(row.Points) || 0;
           });
 
-          if (highlightRow) tr.classList.add("highlight");
-          tableBody.appendChild(tr);
-        });
+          data.sort((a, b) => b.Points - a.Points);
 
-        console.log("✅ Data loaded and styled.");
+          tableHead.innerHTML = "";
+          Object.keys(data[0]).forEach(col => {
+            let th = document.createElement("th");
+            th.textContent = col;
+            tableHead.appendChild(th);
+          });
+
+          tableBody.innerHTML = "";
+          data.forEach(row => {
+            let tr = document.createElement("tr");
+            let highlightRow = false;
+
+            Object.entries(row).forEach(([col, value]) => {
+              let td = document.createElement("td");
+
+              if (col === "Training Completion") {
+                let percent = parseFloat(value);
+                if (!isNaN(percent) && percent >= 70) {
+                  highlightRow = true;
+                }
+                td.textContent = isNaN(percent) ? value : value;
+              } else {
+                td.textContent = value;
+              }
+
+              tr.appendChild(td);
+            });
+
+            if (highlightRow) {
+              tr.classList.add("highlight");
+            }
+
+            tableBody.appendChild(tr);
+          });
+
+          console.log("✅ Data displayed and formatted!");
+        } else {
+          console.error("⚠️ No data found in Supabase table.");
+        }
       } catch (error) {
         console.error("❌ Error fetching data:", error);
       }
