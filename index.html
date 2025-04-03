@@ -3,18 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
-  <style>
-    body {<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -78,7 +67,6 @@
   </style>
 </head>
 <body>
-
   <header>
     <h1>EMEA Implementation Incentive</h1>
   </header>
@@ -94,7 +82,7 @@
     const SUPABASE_URL = "https://ybtupotxytuoattvdnrk.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidHVwb3R4eXR1b2F0dHZkbnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0NzYwMDQsImV4cCI6MjA1NjA1MjAwNH0.cYb-OOtjPJiPNUOCAH032Eql1bsXnfzWtw4t831PlxQ";
     const TABLE_NAME = "emea_incentive";
-    const API_URL = `${SUPABASE_URL}/rest/v1/${emea_incentive}`;
+    const API_URL = `${SUPABASE_URL}/rest/v1/${TABLE_NAME}`;
 
     async function fetchTableData() {
       try {
@@ -107,214 +95,67 @@
           }
         });
 
-        let data = await response.json();
-
-        if (data.length > 0) {
-          const tableHead = document.getElementById("table-head");
-          const tableBody = document.getElementById("table-body");
-
-          // Sort data by Points descending
-          data.forEach(row => row.Points = Number(row.Points) || 0);
-          data.sort((a, b) => b.Points - a.Points);
-
-          // Generate headers
-          tableHead.innerHTML = "";
-          Object.keys(data[0]).forEach(col => {
-            const th = document.createElement("th");
-            th.textContent = col;
-            tableHead.appendChild(th);
-          });
-
-          // Generate rows
-          tableBody.innerHTML = "";
-          data.forEach((row, index) => {
-            const tr = document.createElement("tr");
-            let highlight = false;
-
-            Object.entries(row).forEach(([col, value]) => {
-              const td = document.createElement("td");
-
-              if (col === "Name") {
-                const medal = index === 0 ? " 🥇" : index === 1 ? " 🥈" : index === 2 ? " 🥉" : "";
-                td.textContent = value + medal;
-              } else if (col === "Training Completion") {
-                const percent = parseFloat(value);
-                td.textContent = value;
-                if (!isNaN(percent) && percent >= 70) highlight = true;
-              } else {
-                td.textContent = value;
-              }
-
-              tr.appendChild(td);
-            });
-
-            if (highlight) tr.classList.add("highlight");
-            tableBody.appendChild(tr);
-          });
-
-          console.log("✅ Table rendered");
-        } else {
-          console.error("⚠️ No data found in Supabase");
+        if (!response.ok) {
+          throw new Error(`Fetch error: ${response.status} ${response.statusText}`);
         }
 
-      } catch (error) {
-        console.error("❌ Error fetching data:", error);
-      }
-    }
+        let data = await response.json();
 
-    fetchTableData();
-    setInterval(() => location.reload(), 600000);
-  </script>
-</body>
-</html>
+        if (data.length === 0) {
+          console.error("⚠️ No data found in Supabase table.");
+          return;
+        }
 
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: white;
-      text-align: center;
-    }
+        const tableHead = document.getElementById("table-head");
+        const tableBody = document.getElementById("table-body");
 
-    header {
-      background: url('https://raw.githubusercontent.com/Jonoothans/emea_incentive/main/assets/sunrise1.png?v=1') no-repeat center;
-      background-size: cover;
-      width: 100%;
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 600;
-      margin: 0;
-      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-    }
-
-    table {
-      width: 80%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    th {
-      background-color: #002855;
-      color: white;
-      padding: 12px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f8f8f8;
-    }
-
-    .highlight {
-      background-color: #dff0d8 !important;
-      font-weight: 600;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>EMEA Implementation Incentive</h1>
-  </header>
-
-  <table id="data-table">
-    <thead>
-      <tr id="table-head"></tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
-
-  <script>
-    const SUPABASE_URL = "https://ybtupotxytuoattvdnrk.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlidHVwb3R4eXR1b2F0dHZkbnJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0NzYwMDQsImV4cCI6MjA1NjA1MjAwNH0.cYb-OOtjPJiPNUOCAH032Eql1bsXnfzWtw4t831PlxQ";
-    const TABLE_NAME = "emea_incentive";
-    const API_URL = ${SUPABASE_URL}/rest/v1/${TABLE_NAME};
-
-    async function fetchTableData() {
-      try {
-        const response = await fetch(API_URL, {
-          method: "GET",
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": Bearer ${SUPABASE_KEY},
-            "Content-Type": "application/json"
-          }
+        data.forEach(row => {
+          row.Points = Number(row.Points) || 0;
         });
 
-        let data = await response.json();
+        data.sort((a, b) => b.Points - a.Points);
 
-        if (data.length > 0) {
-          const tableHead = document.getElementById("table-head");
-          const tableBody = document.getElementById("table-body");
+        const medalEmoji = ["🥇", "🥈", "🥉"];
 
-          data.forEach(row => {
-            row.Points = Number(row.Points) || 0;
-          });
+        tableHead.innerHTML = "";
+        Object.keys(data[0]).forEach(col => {
+          let th = document.createElement("th");
+          th.textContent = col;
+          tableHead.appendChild(th);
+        });
 
-          data.sort((a, b) => b.Points - a.Points);
+        tableBody.innerHTML = "";
+        data.forEach((row, index) => {
+          let tr = document.createElement("tr");
+          let highlightRow = false;
 
-          tableHead.innerHTML = "";
-          Object.keys(data[0]).forEach(col => {
-            let th = document.createElement("th");
-            th.textContent = col;
-            tableHead.appendChild(th);
-          });
-
-          tableBody.innerHTML = "";
-          data.forEach(row => {
-            let tr = document.createElement("tr");
-            let highlightRow = false;
-
-            Object.entries(row).forEach(([col, value]) => {
-              let td = document.createElement("td");
-
-              if (col === "Training Completion") {
-                let percent = parseFloat(value);
-                if (!isNaN(percent) && percent >= 70) {
-                  highlightRow = true;
-                }
-                td.textContent = isNaN(percent) ? value : value;
-              } else {
-                td.textContent = value;
-              }
-
-              tr.appendChild(td);
-            });
-
-            if (highlightRow) {
-              tr.classList.add("highlight");
+          Object.entries(row).forEach(([col, value], i) => {
+            let td = document.createElement("td");
+            if (col === "Training Completion") {
+              let num = parseFloat(value);
+              if (!isNaN(num) && num >= 70) highlightRow = true;
+              td.textContent = value;
+            } else if (col === "Name" && index < 3) {
+              td.textContent = `${medalEmoji[index]} ${value}`;
+            } else {
+              td.textContent = value;
             }
-
-            tableBody.appendChild(tr);
+            tr.appendChild(td);
           });
 
-          console.log("✅ Data displayed and formatted!");
-        } else {
-          console.error("⚠️ No data found in Supabase table.");
-        }
+          if (highlightRow) tr.classList.add("highlight");
+
+          tableBody.appendChild(tr);
+        });
+
+        console.log("✅ Data displayed and formatted!");
       } catch (error) {
         console.error("❌ Error fetching data:", error);
       }
     }
 
     fetchTableData();
-    setInterval(() => location.reload(), 600000);
+    setInterval(() => location.reload(), 600000); // Refresh every 10 min
   </script>
 </body>
 </html>
